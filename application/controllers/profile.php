@@ -67,7 +67,8 @@ class Profile extends REST_Controller
 		{
 			$q->limit($this->get('limit'), $this->get('offset'));
 		}
-		else{
+		else
+		{
 			$q->limit(50, $this->get('offset'));
 		}
 
@@ -90,7 +91,8 @@ class Profile extends REST_Controller
 		{
 			$q->limit($this->get('limit'), $this->get('offset'));
 		}
-		else{
+		else
+		{
 			$q->limit(10, $this->get('offset'));
 		}
 
@@ -111,7 +113,8 @@ class Profile extends REST_Controller
 		{
 			$q->limit($this->get('limit'), $this->get('offset'));
 		}
-		else{
+		else
+		{
 			$q->limit(50, $this->get('offset'));
 		}
 
@@ -136,7 +139,8 @@ class Profile extends REST_Controller
 		{
 			$q->limit($this->get('limit'), $this->get('offset'));
 		}
-		else{
+		else
+		{
 			$q->limit(100, $this->get('offset'));
 		}
 
@@ -165,7 +169,8 @@ class Profile extends REST_Controller
 		{
 			$q->limit($this->get('limit'), $this->get('offset'));
 		}
-		else{
+		else
+		{
 			$q->limit(15, $this->get('offset'));
 		}
 
