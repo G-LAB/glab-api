@@ -130,9 +130,7 @@ class Profile extends REST_Controller
 	{
 		$this->load->helpers('glib_array');
 
-		$q = $this->db	->where('pid',$this->get('pid'))
-						->get('profiles_meta')
-						->result_array();
+		$q = $this->db	->where('pid',$this->get('pid'));
 
 		// Set Limit and Offset
 		if (ctype_digit($this->get('limit')) === true)
@@ -144,7 +142,9 @@ class Profile extends REST_Controller
 			$q->limit(100, $this->get('offset'));
 		}
 
-		$this->response(array_flatten($q, 'meta_key', 'meta_value'), 200);
+		$r = $q->get('profiles_meta')->result_array();
+
+		$this->response(array_flatten($r, 'meta_key', 'meta_value'), 200);
 	}
 
 	/**
