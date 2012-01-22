@@ -37,7 +37,10 @@
 |
 */
 
-$autoload['packages'] = array();
+$autoload['packages'] = array(
+	APPPATH.'third_party/glab-ci-ext',
+	APPPATH.'third_party/g-lib'
+);
 
 
 /*

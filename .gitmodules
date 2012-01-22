@@ -4,3 +4,9 @@
 [submodule "application/third_party/restserver"]
 	path = application/third_party/restserver
 	url = git://github.com/philsturgeon/codeigniter-restserver.git
+[submodule "application/third_party/glab-ci-ext"]
+	path = application/third_party/glab-ci-ext
+	url = git@github.com:G-LAB/glab-ci-ext.git
+[submodule "application/third_party/g-lib"]
+	path = application/third_party/g-lib
+	url = git@github.com:G-LAB/g-lib.git
