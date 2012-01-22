@@ -81,7 +81,8 @@ class Profile extends REST_Controller
 	 */
 	function emails_get()
 	{
-		$q = $this->db	->where('pid',$this->get('pid'))
+		$q = $this->db	->select('email, is_primary')
+						->where('pid',$this->get('pid'))
 						->order_by('is_primary','DESC');
 
 		// Set Limit and Offset
@@ -125,6 +126,7 @@ class Profile extends REST_Controller
 	function meta_get()
 	{
 		$this->load->helpers('glib_array');
+
 		$q = $this->db	->where('pid',$this->get('pid'))
 						->get('profiles_meta')
 						->result_array();
