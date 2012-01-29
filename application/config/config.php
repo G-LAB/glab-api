@@ -1,5 +1,13 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+function __autoload($str)
+{
+	if ($str == 'REST_Controller')
+	{
+		require APPPATH.'/libraries/REST_Controller.php';
+	}
+}
+
 /*
 |--------------------------------------------------------------------------
 | Base Site URL
