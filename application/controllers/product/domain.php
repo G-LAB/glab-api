@@ -21,14 +21,9 @@ class Domain extends REST_Controller
 	/**
 	 * Get a Domain Registration
 	 */
-	function registration_get()
+	function registration_get($domain)
 	{
-		if ($this->get('domain') === false)
-		{
-			$this->response(array('error'=>'Domain is a required parameter.'), 400);
-		}
-
-		$data = $this->domain->get($this->get('domain'));
+		$data = $this->domain->get($domain);
 
 		if (is_array($data) === true)
 		{
