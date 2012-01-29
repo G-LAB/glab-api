@@ -11,8 +11,13 @@
 
 class Controller_Name extends REST_Controller
 {
+	function __construct()
+	{
+		parent::__construct();
+	}
+
 	function method_get()
 	{
-			$this->response(null, 200);
+		$this->response(null, 200);
 	}
 }
