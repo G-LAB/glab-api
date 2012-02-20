@@ -1,22 +1,31 @@
 <?php
-class Brand_model extends CI_Model {
+class Brand_model extends CI_Model
+{
+	function get_identity ($brid)
+	{
+		settype($brid, 'integer');
 
-	function __construct () {
+		if ($brid == 0)
+		{
+			$brid = 1;
+		}
 
-		parent::__construct();
+		$q = $this->db
+			->where(array('brid'=>$brid))
+			->limit(1)
+			->get('brands');
 
-		$this->load->helper('array');
-
-	}
-
-	function get ($brid=1) {
-		if (!is_numeric($brid)  || !$brid) $brid = 1;
-		$q = $this->db->get_where('brands','brid = '.$brid);
 		return $q->row_array();
 	}
 
-	function setSession ($brid=FALSE) {
-		return $this->session->set_userdata('brand',$this->get($brid));
+	function get_identities ($limit,$offset)
+	{
+		$q = $this->db
+			->limit($limit,$offset)
+			->get('brands');
+
+		return $q->result_array();
 	}
+
 }
 ?>
