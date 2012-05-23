@@ -47,7 +47,7 @@ $config['rest_realm'] = 'G LAB API';
 |	'' = no login required, 'basic' = unsecure login, 'digest' = more secure login
 |
 */
-$config['rest_auth'] = false;
+$config['rest_auth'] = 'basic';
 
 /*
 |--------------------------------------------------------------------------
@@ -81,7 +81,10 @@ $config['rest_auth'] = false;
 |	array('admin' => '1234')
 |
 */
-$config['rest_valid_logins'] = array('portal' => '1234');
+$config['rest_valid_logins'] = array(
+	'glab_portal' => 'tj0CjZks2vCbI7jZfOwRLVVr5wqsXYld24khApeYLunUGMS33g6qxUIff13wef3',
+	'ryan' => '2l4dPXYlp94p0TQmqkWq9XrrF5zRWtbffnT673LTOqUxKybLqZAUZfqcdNSgrgW'
+);
 
 /*
 |--------------------------------------------------------------------------
