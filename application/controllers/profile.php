@@ -14,23 +14,28 @@
 
 class Profile extends REST_Controller
 {
+	function __construct()
+	{
+		parent::__construct();
+		$this->load->model('profile_model');
+	}
+
 	/**
 	 * Get Profile Addresses
 	 */
 	function addresses_get()
 	{
-		$q = $this->db->where('pid',$this->get('pid'));
-
-		// Set Limit and Offset
+		// Set Limit
 		if (ctype_digit($this->get('limit')) === true)
 		{
-			$q->limit($this->get('limit'), $this->get('offset'));
+			$limit = $this->get('limit');
 		}
-		else{
-			$q->limit(10, $this->get('offset'));
+		else
+		{
+			$limit = 10;
 		}
 
-		$r = $q->get('profiles_address')->result_array();
+		$r = $this->profile_model->get_addresses($this->get('pid'), $limit, $this->get('offset'));
 
 		$this->response($r, 200);
 	}
@@ -40,12 +45,11 @@ class Profile extends REST_Controller
 	 */
 	function base_get()
 	{
-		$q = $this->db->where('pid',$this->get('pid'));
-		$r = $q->limit(1)->get('profiles');
+		$r = $this->profile_model->get_base($this->get('pid'));
 
-		if ($r->num_rows() > 0)
+		if (count($r) > 0)
 		{
-			$this->response($r->row_array(), 200);
+			$this->response($r, 200);
 		}
 		else
 		{
@@ -54,23 +58,21 @@ class Profile extends REST_Controller
 	}
 
 	/**
-	 * Get Profile Delefates
+	 * Get Profile Delegates
 	 */
 	function delegates_get()
 	{
-		$q = $this->db->where('pid_c',$this->get('pid'));
-
-		// Set Limit and Offset
+		// Set Limit
 		if (ctype_digit($this->get('limit')) === true)
 		{
-			$q->limit($this->get('limit'), $this->get('offset'));
+			$limit = $this->get('limit');
 		}
 		else
 		{
-			$q->limit(50, $this->get('offset'));
+			$limit = 50;
 		}
 
-		$r = $q->get('profiles_manager')->result_array();
+		$r = $this->profile_model->get_delegates($this->get('pid'), $limit, $this->get('offset'));
 
 		$this->response($r, 200);
 	}
@@ -80,21 +82,17 @@ class Profile extends REST_Controller
 	 */
 	function emails_get()
 	{
-		$q = $this->db	->select('email, is_primary')
-						->where('pid',$this->get('pid'))
-						->order_by('is_primary','DESC');
-
-		// Set Limit and Offset
+		// Set Limit
 		if (ctype_digit($this->get('limit')) === true)
 		{
-			$q->limit($this->get('limit'), $this->get('offset'));
+			$limit = $this->get('limit');
 		}
 		else
 		{
-			$q->limit(10, $this->get('offset'));
+			$limit = 50;
 		}
 
-		$r = $q->get('profiles_email')->result_array();
+		$r = $this->profile_model->get_emails($this->get('pid'), $limit, $this->get('offset'));
 
 		$this->response($r, 200);
 	}
@@ -104,19 +102,17 @@ class Profile extends REST_Controller
 	 */
 	function managers_get()
 	{
-		$q = $this->db->where('pid_p',$this->get('pid'));
-
-		// Set Limit and Offset
+		// Set Limit
 		if (ctype_digit($this->get('limit')) === true)
 		{
-			$q->limit($this->get('limit'), $this->get('offset'));
+			$limit = $this->get('limit');
 		}
 		else
 		{
-			$q->limit(50, $this->get('offset'));
+			$limit = 50;
 		}
 
-		$r = $q->get('profiles_manager')->result_array();
+		$r = $this->profile_model->get_managers($this->get('pid'), $limit, $this->get('offset'));
 
 		$this->response($r, 200);
 	}
@@ -126,23 +122,67 @@ class Profile extends REST_Controller
 	 */
 	function meta_get()
 	{
-		$this->load->helpers('glib_array');
-
-		$q = $this->db	->where('pid',$this->get('pid'));
-
-		// Set Limit and Offset
+		// Set Limit
 		if (ctype_digit($this->get('limit')) === true)
 		{
-			$q->limit($this->get('limit'), $this->get('offset'));
+			$limit = $this->get('limit');
 		}
 		else
 		{
-			$q->limit(100, $this->get('offset'));
+			$limit = 50;
 		}
 
-		$r = $q->get('profiles_meta')->result_array();
+		$r = $this->profile_model->get_meta($this->get('pid'), $limit, $this->get('offset'));
 
-		$this->response(array_flatten($r, 'meta_key', 'meta_value'), 200);
+		$this->response($r, 200);
+	}
+
+	function meta_post()
+	{
+		$pid = $this->post('pid');
+		$key = $this->post('key');
+		$value = $this->post('value');
+
+		if (empty($pid) === true OR empty($key) === true OR empty($value) === true)
+		{
+			$this->response('PID, key, and value are required.', 400);
+		}
+
+		$this->profile_model->set_meta_key($pid, $key, $value);
+
+		if ($this->db->affected_rows() > 0)
+		{
+			$this->response(true, 200);
+		}
+		else
+		{
+			$this->response('Database write failed.', 503);
+		}
+	}
+
+	function pid_get()
+	{
+		$q = $this->db;
+
+		if ($this->get('tel'))
+		{
+			$q->where('tel',tel_dialstring($this->get('tel')))->from('profiles_tel');
+		}
+		elseif ($this->get('email'))
+		{
+			$q->where('email',$this->get('email'))->from('profiles_email');
+		}
+
+		$r = $this->db->select('pid')->get();
+
+		if ($r->num_rows() > 0)
+		{
+			$this->response($r->row(), 200);
+		}
+		else
+		{
+			$this->response(array('error'=>'Matching profile not found.'), 404);
+		}
 	}
 
 	/**
@@ -160,19 +200,17 @@ class Profile extends REST_Controller
 	 */
 	function tels_get()
 	{
-		$q = $this->db->where('pid',$this->get('pid'));
-
-		// Set Limit and Offset
+		// Set Limit
 		if (ctype_digit($this->get('limit')) === true)
 		{
-			$q->limit($this->get('limit'), $this->get('offset'));
+			$limit = $this->get('limit');
 		}
 		else
 		{
-			$q->limit(15, $this->get('offset'));
+			$limit = 10;
 		}
 
-		$r = $q->get('profiles_tel')->result_array();
+		$r = $this->profile_model->get_tels($this->get('pid'), $limit, $this->get('offset'));
 
 		$this->response($r, 200);
 	}
